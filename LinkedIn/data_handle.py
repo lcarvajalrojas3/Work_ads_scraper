@@ -25,4 +25,5 @@ class Data:
                 # Concatenate the DataFrame onto the combined DataFrame
                 df = pd.concat([df, self.df_temp])
         return df
+    
 data = Data()

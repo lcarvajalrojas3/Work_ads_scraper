@@ -10,12 +10,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import os
 import random
-import cv2
-import pytesseract
 import base64
 import numpy as np
-import win32gui
-import win32con
+
+
+
+### CONTAINS   
+### CONTIENE FUNCIONES PARA NAVEGAR EL SITIO
+### 
+### 
+### 
+### 
+
+
 
 options = Options()
 options.add_argument("--disable-blink-features=AutomationControlled")
