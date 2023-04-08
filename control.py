@@ -75,13 +75,15 @@ mail = "laserena.arbolada@gmail.com"
 
 keywords = ["Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administración de Empresas",
             "Trabajo Social", "Actuación", "Psicología", "Enfermería", "Prevención de riesgos",
-            "Recursos Humanos", "Antropología", "Prevencionista", "Ingeniero Civil Industrial"]
+            "Recursos Humanos", "Antropología", "Prevencionista", "Ingeniero Civil Industrial",
+            "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores",
+            "Cientista Social", "Profesional de las ciencias sociales", "Forestal"]
 keyword = random.choice(keywords)
 
 ### Define the start and end times for web scraping. <<MUST COMPLETE>>
 
 start_time = datetime.time(hour=2)
-end_time = datetime.time(hour=23, minute=59)
+end_time = datetime.time(hour=23, minute=5)
 
 # Create Data directorys.
 folderpath = data.create_folders(keyword)
@@ -102,7 +104,7 @@ while True:
             print("INITIATING WORK WINDOW")
 
             ## Seteo de tiempo de ventana de trabajo
-            minutes_window = datetime.timedelta(minutes=random.randint(5,10))#(15,35))
+            minutes_window = datetime.timedelta(minutes=random.randint(15,35))
             window_start_time = datetime.datetime.now().time()
             window_stop_time = (
                 datetime.datetime.combine(datetime.date.today(), window_start_time)
@@ -194,7 +196,7 @@ while True:
             driver_open = 0
 
             print("SAVED Next page url:", next_page)
-            intrand = random.randint(30,80)#(30*60,80*60))
+            intrand = random.randint(30*60,80*60)
             print(f"Initiating sleep time for {intrand} minutes at {datetime.datetime.now()}")
             time.sleep(intrand)
 
@@ -220,4 +222,4 @@ while True:
 
     print("MASTER SLEEP TIME SCHEDULE")
     # Generar F(x) que compile dfs de carpeta Data, y guarde en df central
-    time.sleep(500)
+    time.sleep(900)
