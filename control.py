@@ -89,15 +89,17 @@ folderpath = data.create_folders(keyword)
 # Setting iteration tokens
 pag = 1
 finish = 0
+driver_open = 0
 
 ### Init Permanent Process
 while True:
     ### WORK WINDOW
     while (start_time <= datetime.datetime.now().time() <= end_time):
+               
         if finish == 0:
             print("INITIATING WORK WINDOW")
             ## Seteo de tiempo de ventana de trabajo
-            minutes_window = datetime.timedelta(minutes=random.randint(15,35))
+            minutes_window = datetime.timedelta(minutes=random.randint(5,10))#(15,35))
             window_start_time = datetime.datetime.now().time()
             window_stop_time = (
                 datetime.datetime.combine(datetime.date.today(), window_start_time)
@@ -105,29 +107,30 @@ while True:
             print("START TIME:", window_start_time)
             print("STOP TIME", window_stop_time)
 
+            site = Site()
+            driver = site.run()
+            driver_open = 1
+            site.login(driver, mail, clave)
+
         elif finish == 1: 
             print("CONTINUING WORK WINDOW")
             finish = 0
             pag = 1
             keyword = random.choice(keywords)
 
+        ### Cargado de página de avisos
+        if pag == 1:
+            ## Initianing site_mechanics, opening driver, logging in account, bar_searching
+            site.busqueda(driver, keyword)
+        elif pag > 1: ### AGREGAR UN TOKEN DE DRIVER CERRADO/ABIERTO
+            driver.get(next_page)
+            time.sleep(5)
+
         # Ejecución de Site y Scraper
         while finish == 0 and (
             window_start_time <= datetime.datetime.now().time() <= window_stop_time
             ):
 
-            ## Initianing site_mechanics, opening driver, logging in account, bar_searching
-            site = Site()
-            driver = site.run()
-            site.login(driver, mail, clave)
-            
-            ### Cargado de página de avisos
-            if pag == 1:
-                site.busqueda(driver, keyword)
-            elif pag > 1:
-                driver.get(next_page)
-                time.sleep(5)
-            
             # f(x) : Obtención de lista para request
             jobs = site.list_of_links(driver) ### Está seteado para botar los últimos 2 link, que dan bug
 
@@ -180,15 +183,17 @@ while True:
             
             print("WINDOW TIME RUNOUT")
             driver.close()
+            driver_open = 0
 
             print("Next page url:", next_page)
             print("Initiating sleep time")
-            time.sleep(random.randint(30*60,80*60))
+            time.sleep(random.randint(30,80))#(30*60,80*60))
 
         ### Caso C: Se terminó el horario de trabajo.    
         if datetime.datetime.now().time() >= end_time:
             print("Scheduled time ended")
             driver.close()
+            driver_open = 0
 
             ### Guardado de datos
             if os.path.exists(os.path.join(os.path.dirname(folderpath), "data.csv")):
