@@ -196,15 +196,17 @@ while True:
             driver_open = 0
 
             print("SAVED Next page url:", next_page)
-            intrand = random.randint(30*60,80*60)
-            print(f"Initiating sleep time for {intrand} minutes at {datetime.datetime.now()}")
+            intrand = random.randint(20*60,60*60)
+            print(f"Initiating sleep time for {intrand/60} minutes at {datetime.datetime.now()}")
             time.sleep(intrand)
 
         ### Caso C: Se terminó el horario de trabajo.    
         if datetime.datetime.now().time() >= end_time:
             print("Scheduled time ended")
-            driver.close()
-            driver_open = 0
+            
+            if driver_open == 1:
+                driver.close()
+                driver_open = 0
 
             ### Guardado de datos
             if os.path.exists(os.path.join(os.path.dirname(folderpath), "data.csv")):
