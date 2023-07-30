@@ -75,13 +75,15 @@ mail = "laserena.arbolada@gmail.com"
 
 keywords = ["Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administración de Empresas",
             "Trabajo Social", "Actuación", "Psicología", "Enfermería", "Prevención de riesgos",
-            "Recursos Humanos", "Antropología", "Prevencionista", "Ingeniero Civil Industrial"]
+            "Recursos Humanos", "Antropología", "Prevencionista", "Ingeniero Civil Industrial",
+            "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores",
+            "Cientista Social", "Profesional de las ciencias sociales", "Forestal"]
 keyword = random.choice(keywords)
 
 ### Define the start and end times for web scraping. <<MUST COMPLETE>>
 
 start_time = datetime.time(hour=2)
-end_time = datetime.time(hour=23, minute=59)
+end_time = datetime.time(hour=23, minute=5)
 
 # Create Data directorys.
 folderpath = data.create_folders(keyword)
@@ -91,46 +93,53 @@ pag = 1
 finish = 0
 driver_open = 0
 
+site = Site()
 ### Init Permanent Process
 while True:
-    ### WORK WINDOW
+
+    ### WORK WINDOWs
     while (start_time <= datetime.datetime.now().time() <= end_time):
                
         if finish == 0:
             print("INITIATING WORK WINDOW")
+
             ## Seteo de tiempo de ventana de trabajo
-            minutes_window = datetime.timedelta(minutes=random.randint(5,10))#(15,35))
+            minutes_window = datetime.timedelta(minutes=random.randint(15,35))
             window_start_time = datetime.datetime.now().time()
             window_stop_time = (
                 datetime.datetime.combine(datetime.date.today(), window_start_time)
                 + minutes_window).time()
+            
             print("START TIME:", window_start_time)
             print("STOP TIME", window_stop_time)
 
-            site = Site()
-            driver = site.run()
-            driver_open = 1
-            site.login(driver, mail, clave)
+            # > Driver Cerrado
+            if driver_open == 0:
+ 
+                driver = site.run()
+                driver_open = 1
+                site.login(driver, mail, clave)
 
-        elif finish == 1: 
-            print("CONTINUING WORK WINDOW")
+        # pag se modifica según finish = 1, sino, se mantiene.    
+        elif finish == 1 and (window_start_time <= datetime.datetime.now().time() <= window_stop_time): 
+            print("CONTINUING WORK WINDOW WITH NEW KEYBOARD")
             finish = 0
             pag = 1
             keyword = random.choice(keywords)
 
-        ### Cargado de página de avisos
+        ### Cargado de pag de avisos
         if pag == 1:
             ## Initianing site_mechanics, opening driver, logging in account, bar_searching
             site.busqueda(driver, keyword)
-        elif pag > 1: ### AGREGAR UN TOKEN DE DRIVER CERRADO/ABIERTO
+        if pag > 1:
             driver.get(next_page)
-            time.sleep(5)
 
         # Ejecución de Site y Scraper
         while finish == 0 and (
             window_start_time <= datetime.datetime.now().time() <= window_stop_time
             ):
 
+            ### GENERO CICLO    
             # f(x) : Obtención de lista para request
             jobs = site.list_of_links(driver) ### Está seteado para botar los últimos 2 link, que dan bug
 
@@ -159,19 +168,20 @@ while True:
 
                 except: print(f"Error en pag {pag} i {i}  n {i/2+1} ... continuing")
 
-
             # Preparación variables siguiente de página
             keyword_x = keyword.replace(" ", "%20")
             pagestart = (pag)*25
             next_page = (f"https://www.linkedin.com/jobs/search/?keywords={keyword_x}&start={pagestart}")
-            
 
             # f(x) click en botón de siguiente página
             pag, finish = site.nextpage(pag, driver)
                 # try: Botón encontrado y clickeado >>> finish=0, pag =+1 : 
                 # except: Botón no encontrado >>> finish=1, pag=pag : 
         
-        ### TERMINO DE WORKWINDOW
+
+
+
+        ### TERMINO DE 
         ### Caso A: No hay botón de término por término de páginas
         ### o por ERROR dentro de secuencia de scrapeo de página/paso a sgt página.
         if finish == 1:
@@ -185,15 +195,18 @@ while True:
             driver.close()
             driver_open = 0
 
-            print("Next page url:", next_page)
-            print("Initiating sleep time")
-            time.sleep(random.randint(30,80))#(30*60,80*60))
+            print("SAVED Next page url:", next_page)
+            intrand = random.randint(20*60,60*60)
+            print(f"Initiating sleep time for {intrand/60} minutes at {datetime.datetime.now()}")
+            time.sleep(intrand)
 
         ### Caso C: Se terminó el horario de trabajo.    
         if datetime.datetime.now().time() >= end_time:
             print("Scheduled time ended")
-            driver.close()
-            driver_open = 0
+            
+            if driver_open == 1:
+                driver.close()
+                driver_open = 0
 
             ### Guardado de datos
             if os.path.exists(os.path.join(os.path.dirname(folderpath), "data.csv")):
@@ -211,4 +224,4 @@ while True:
 
     print("MASTER SLEEP TIME SCHEDULE")
     # Generar F(x) que compile dfs de carpeta Data, y guarde en df central
-    time.sleep(300)
+    time.sleep(900)
