@@ -4,9 +4,16 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from time import sleep
 import pandas as pd
+import os
 
 class Site:
     def __init__(self):
+        """
+        Este método es un constructor en Python. 
+        El método __init__ se llama automáticamente cuando 
+        se crea una nueva instancia de la clase.
+        """
+
         self.url = 'https://www.linkedin.com/'
         #print(self.url)
         self.is_running = False
@@ -15,6 +22,7 @@ class Site:
         self.is_running = True
         self.driver = self.open_webdriver()
         self.driver.get(self.url)
+        print("Abriendo portal")
         return self.driver
 
     def stop(self):
@@ -36,7 +44,11 @@ class Site:
         self.exp_opt = ["enable-logging", "enable-automation", "ignore-certificate-errors"]
         self.options.add_experimental_option("excludeSwitches", self.exp_opt)
 
-        self.driver = webdriver.Chrome(options=self.options) # Replace with appropriate web driver
+        file_dir = os.path.dirname(__file__)
+        print(file_dir)
+
+        self.driver = webdriver.Chrome(executable_path=os.path.join(file_dir, '../chromedriver'))#, options=self.options) # Replace with appropriate web driver
+        print("open_webdriver: Driver abierto")
         return self.driver
     
     def login(self, driver, mail, clave):

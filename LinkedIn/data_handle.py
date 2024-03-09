@@ -3,11 +3,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 class Data:
-    def create_folders(self, keyword):
+    def check_folders(self, keyword):
         print("Revisando existencia de carpetas necesarias")
-        self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.folderpath = "Data" #keyword.replace(" ", "_") + "_" + str(datetime.now().date())
-        self.folderpath = os.path.join(self.dir_path, self.folderpath)
+        self.self_path = os.path.dirname(os.path.realpath(__file__))
+        self.folderpath = os.path.join(self.self_path, "Data")
         if not os.path.exists(self.folderpath):
             os.mkdir(self.folderpath)
             print("Subcarpeta Data creada\n\n")
