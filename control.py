@@ -78,22 +78,27 @@ keywords = ["Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administra
             "Recursos Humanos", "Antropología", "Prevencionista", "Ingeniero Civil Industrial",
             "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores",
             "Cientista Social", "Profesional de las ciencias sociales", "Forestal"]
+
 keyword = random.choice(keywords)
 
 ### Define the start and end times for web scraping. <<MUST COMPLETE>>
 
-start_time = datetime.time(hour=2)
+start_time = datetime.time(hour=0)
 end_time = datetime.time(hour=23, minute=5)
 
-# Create Data directorys.
-folderpath = data.create_folders(keyword)
+# Create Data directorys con biblioteca data_handle
+folderpath = data.check_folders(keyword)
 
 # Setting iteration tokens
 pag = 1
 finish = 0
 driver_open = 0
 
+
+# Trayendo herramientas y scraper en sí.
+# Abriendo instancia
 site = Site()
+
 ### Init Permanent Process
 while True:
 
@@ -118,6 +123,7 @@ while True:
  
                 driver = site.run()
                 driver_open = 1
+
                 site.login(driver, mail, clave)
 
         # pag se modifica según finish = 1, sino, se mantiene.    
