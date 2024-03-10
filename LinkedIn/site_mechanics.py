@@ -70,7 +70,7 @@ class Site:
     def busqueda(self, driver, keyword):
         sleep(2)
         driver.get("https://www.linkedin.com/jobs/")
-        sleep(3)
+        sleep(5)
         self.searchdiv = self.driver.find_element(By.XPATH,'//*[@aria-label="Busca por cargo, aptitud o empresa"]')
         self.searchdiv.click()
         self.searchdiv.clear()
@@ -79,19 +79,23 @@ class Site:
         self.searchdiv.send_keys(Keys.RETURN)
 
         sleep(1)
-        print(f"Búsqueda de {keyword} realizada\n")
+        print(f"Búsqueda de [{keyword}] realizada\n")
         sleep(2)
 
     def list_of_links(self, driver):#, df, folderpath, pag):
-        ### A usarse en Escenario: Página-listado de trabajos < - Resultado búsqueda()
-        ### Debiese scrolear hacia abajo div de listado, hasta cargar todos los link
-        ### y luego abrir uno a uno y aplicar la función scrap_item()
-
+        """
+        Escenario: Resultado de búsqueda()
+        - Debiese scrolear hacia abajo div de listado, hasta cargar todos los link
+        y luego abrir uno a uno y aplicar la función scrap_item()
+        """
+        sleep(5)
+        print("iniciando list_of_links")
         self.df_page = pd.DataFrame()
             ## Identificación de container
 
         self.container = driver.find_element(By.XPATH, '//*[contains(@class, "scaffold-layout__list-container")]/..')
             # Medido de tamaño de scroll
+        print("  Encontrado container\n  Iniciando scroll")
         self.prev_height = driver.execute_script("return arguments[0].scrollHeight;", self.container)
             # Scroll down the container until the height no longer changes
         while True:
@@ -107,21 +111,28 @@ class Site:
             self.prev_height = self.new_height  # Update the previous height
         
         ### Trabaja sobre cada "link" de trabajo dentro de la lista de búsqueda
+        print("  Scroll terminado, obteniendo listado")
         self.jobs = driver.find_elements(
             By.XPATH,'//*[contains(@href, "/jobs/view")]'
             )
+        print(self.jobs)
+        print(len(self.jobs))
         self.jobs = self.jobs[:-2]
+        print(self.jobs)
+        print(len(self.jobs))
 
         return self.jobs
 
     def nextpage(self, pag, driver):
       try:   
+         
+         self.temp_button = driver.find_element(By.XPATH, f'//button[contains(@aria-label,"Página {pag+1}")]')
+         driver.execute_script("arguments[0].click();", self.temp_button)
+         #self.temp_button.click()
+         print(f"NEXT PAGE BUTTON CLICKED TO PAG -- {pag+1}")
          pag +=1
-         self.temp_button = driver.find_element(By.XPATH, f'//button[contains(@aria-label,"Página {pag}")]')
-         self.temp_button.click()
-         print(f"NEXT PAGE BUTTON CLICKED TO PAG -- {pag}")
-         sleep(3)
          finish = 0
+         sleep(3)
          return pag, finish
       except:
          finish = 1

@@ -109,7 +109,7 @@ while True:
             print("INITIATING WORK WINDOW")
 
             ## Seteo de tiempo de ventana de trabajo
-            minutes_window = datetime.timedelta(minutes=random.randint(15,35))
+            minutes_window = datetime.timedelta(minutes=random.randint(45,120))
             window_start_time = datetime.datetime.now().time()
             window_stop_time = (
                 datetime.datetime.combine(datetime.date.today(), window_start_time)
@@ -125,6 +125,7 @@ while True:
                 driver_open = 1
 
                 site.login(driver, mail, clave)
+                time.sleep(60)
 
         # pag se modifica según finish = 1, sino, se mantiene.    
         elif finish == 1 and (window_start_time <= datetime.datetime.now().time() <= window_stop_time): 
@@ -132,6 +133,8 @@ while True:
             finish = 0
             pag = 1
             keyword = random.choice(keywords)
+
+
 
         ### Cargado de pag de avisos
         if pag == 1:
@@ -147,32 +150,38 @@ while True:
 
             ### GENERO CICLO    
             # f(x) : Obtención de lista para request
+            
             jobs = site.list_of_links(driver) ### Está seteado para botar los últimos 2 link, que dan bug
 
-            print(f"\nIniciando scrap de página {pag}")
-            print("Avisos en página: ", len(jobs)/2, "\n")
+            print(f"\nIniciando scrap [{keyword}] en página {pag}")
+            print("Avisos en página: ", len(jobs), "\n")
 
             ### SCRAPEO DE LIST_OF_LINKS
-            for i in range(0, len(jobs), 2):
+            for i in range(0, len(jobs), 1):
                 try:
 
                     # Carga de datos de aviso
                     jobs[i].click()
+                    print("click realizado en i ", i)
                     time.sleep(5)
-
+                    
                     # Extracción de datos
                     dicc = scraper.scrap(driver, keyword) ### F(x) Extrae info del item, y la devuelve en un dicc
-                    
+                    #print(dicc)
+                    time.sleep(random.randint(3,20))
+
                     #Encapsulado y guardado de datos
                     date_temp = datetime.datetime.today().strftime('%d-%m-%Y-%H-%M-%S')
                     dftemp = pd.DataFrame(dicc)
                     dftemp.to_csv(os.path.join(
                         folderpath, f"{keyword}_{date_temp}.csv"))
                     
-                    print(f"Scrap exitoso en pag {pag} - i {i} - n {i/2+1}")
+                    print(f"Scrap exitoso en pag {pag} - i {i} - n {i+1}\n")
                     time.sleep(random.randint(1,5))
 
-                except: print(f"Error en pag {pag} i {i}  n {i/2+1} ... continuing")
+                except: 
+                    print(f"Error en pag {pag} i {i}  n {i+1} ... continuando")
+                    time.sleep(14)
 
             # Preparación variables siguiente de página
             keyword_x = keyword.replace(" ", "%20")
