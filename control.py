@@ -1,5 +1,5 @@
 import time
-from LinkedIn.site_mechanics import Site
+from LinkedIn.site_mechanics import Site    
 from LinkedIn.scraper import scraper
 from LinkedIn.data_handle import data
 import datetime
@@ -71,20 +71,25 @@ import random
 clave = "polghtherce1"
 mail = "laserena.arbolada@gmail.com"
 
+#clave = "9999cdrz4@A"
+#mail = "lcarvajalrojas3@gmail.com"
+
 ### List of posible searches. << MUST COMPLETE >>
 
-keywords = ["Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administración de Empresas",
-            "Trabajo Social", "Actuación", "Psicología", "Enfermería", "Prevención de riesgos",
-            "Recursos Humanos", "Antropología", "Prevencionista", "Ingeniero Civil Industrial",
-            "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores",
-            "Cientista Social", "Profesional de las ciencias sociales", "Forestal"]
+keywords = [
+            "Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administración de Empresas", "C#", "DevOps",
+            "Trabajo Social", "Actuación", "Psicología", "Química", "IaC",
+            "Antropología", "Ingeniero Civil Industrial", "Física", "C++",
+            "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores", "Python",
+            "Cientista Social", "Forestal", "Java", "Azure", "Cloud"
+            ]
 
 keyword = random.choice(keywords)
 
-### Define the start and end times for web scraping. <<MUST COMPLETE>>
+### Define the start and end times for web scraping. 
 
 start_time = datetime.time(hour=0)
-end_time = datetime.time(hour=23, minute=5)
+end_time = datetime.time(hour=23, minute=59)
 
 # Create Data directorys con biblioteca data_handle
 folderpath = data.check_folders(keyword)
@@ -110,10 +115,8 @@ while True:
 
             ## Seteo de tiempo de ventana de trabajo
             minutes_window = datetime.timedelta(minutes=random.randint(45,120))
-            window_start_time = datetime.datetime.now().time()
-            window_stop_time = (
-                datetime.datetime.combine(datetime.date.today(), window_start_time)
-                + minutes_window).time()
+            window_start_time = datetime.datetime.now()
+            window_stop_time = window_start_time + minutes_window
             
             print("START TIME:", window_start_time)
             print("STOP TIME", window_stop_time)
@@ -125,7 +128,7 @@ while True:
                 driver_open = 1
 
                 site.login(driver, mail, clave)
-                time.sleep(60)
+                time.sleep(80)
 
         # pag se modifica según finish = 1, sino, se mantiene.    
         elif finish == 1 and (window_start_time <= datetime.datetime.now().time() <= window_stop_time): 
@@ -145,7 +148,7 @@ while True:
 
         # Ejecución de Site y Scraper
         while finish == 0 and (
-            window_start_time <= datetime.datetime.now().time() <= window_stop_time
+            window_start_time <= datetime.datetime.now() <= window_stop_time
             ):
 
             ### GENERO CICLO    
@@ -204,36 +207,39 @@ while True:
 
         ### Caso B: Se terminó la ventana de trabajo
         ### y no las páginas del keyword:
-        if end_time >= datetime.datetime.now().time() >= window_stop_time and finish == 0:
+        if end_time >= datetime.datetime.now() >= window_stop_time and finish == 0:
             
             print("WINDOW TIME RUNOUT")
             driver.close()
             driver_open = 0
 
+            ## Si cae aquí puede generar error
             print("SAVED Next page url:", next_page)
             intrand = random.randint(20*60,60*60)
             print(f"Initiating sleep time for {intrand/60} minutes at {datetime.datetime.now()}")
             time.sleep(intrand)
 
         ### Caso C: Se terminó el horario de trabajo.    
-        if datetime.datetime.now().time() >= end_time:
+        if datetime.datetime.now() >= end_time and finish == 1:
             print("Scheduled time ended")
             
-            if driver_open == 1:
-                driver.close()
-                driver_open = 0
+            # if driver_open == 1:
+            #     driver.close()
+            #     driver_open = 0
+
+            ### Lógica de consolidación de datos.
 
             ### Guardado de datos
-            if os.path.exists(os.path.join(os.path.dirname(folderpath), "data.csv")):
-                print("DDTT existente")
-                df = pd.read_csv(os.path.join(os.path.dirname(folderpath), "data.csv"))
-                df = data.save_data(folderpath, df)
-                df.to_csv(os.path.join(os.path.dirname(folderpath), "data.csv"))
-            else:
-                print("DDTT no existente")
-                df = pd.DataFrame()
-                df = data.save_data(folderpath, df)
-                df.to_csv(os.path.join(os.path.dirname(folderpath), "data.csv"))
+            # if os.path.exists(os.path.join(os.path.dirname(folderpath), "data.csv")):
+            #     print("DDTT existente")
+            #     df = pd.read_csv(os.path.join(os.path.dirname(folderpath), "data.csv"))
+            #     df = data.save_data(folderpath, df)
+            #     df.to_csv(os.path.join(os.path.dirname(folderpath), "data.csv"))
+            # else:
+            #     print("DDTT no existente")
+            #     df = pd.DataFrame()
+            #     df = data.save_data(folderpath, df)
+            #     df.to_csv(os.path.join(os.path.dirname(folderpath), "data.csv"))
             
             ### Falta eliminado de datos antiguos.
 

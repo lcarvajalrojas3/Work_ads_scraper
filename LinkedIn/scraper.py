@@ -55,25 +55,8 @@ class Scraper:
             #print("Company_size: ", self.Company_size)
             self.Company_area = None
             #print("Company_area: ", self.Company_area)
-
-        # def aptitudes(driver):
-        #     button = driver.find_element(By.XPATH,'//button[contains(@id, "ember") and contains(@class, "mv5 t-16")]')
-        #     print("botón encontrado")
-        #     driver.execute_script("arguments[0].click();", button)
-        #     #button.click()
-        #     print("botón clickeado")
-        #     sleep(5)
-        #     aptsdiv = driver.find_elements(By.XPATH,'//*[@class="display-flex align-items-center"]')
-        #     print("objetos encontrados")
-        #     Apts = []
-        #     for aptdiv in aptsdiv[:-1]:
-        #         Apts.append(aptdiv.text)
-        #     closebutton = driver.find_element(By.XPATH, '//*[@aria-label= "Descartar"]')
-        #     print("botón encontrado")
-        #     closebutton.click()
-        #     sleep(1)
-        #     return Apts
         
+        ## SCRIPT APTITUDES
         try: 
             #self.Apts = aptitudes(driver)
             button = driver.find_element(By.XPATH,'//button[contains(@id, "ember") and contains(@class, "mv5 t-16")]')
@@ -101,7 +84,7 @@ class Scraper:
 
 
         return {"Title": self.Title, "Link": self.Link, "Company":self.Company, "Location":self.Location, "Time_on": self.Time_on, "Applies": self.Applies, 
-                "Working_day":self.Working_day, "Experience": self.Experience, 
-                "Company_size":self.Company_size, "Apts": [self.Apts], "Description":self.Description, "Keyword": keyword}
+                "Working_day":self.Working_day, "Experience": self.Experience, "Company_size":self.Company_size, 
+                "Company_area":self.Company_area, "Apts": [self.Apts], "Description":self.Description, "Keyword": keyword}
 
 scraper = Scraper()
