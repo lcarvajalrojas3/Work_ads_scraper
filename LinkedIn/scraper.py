@@ -8,10 +8,13 @@ from time import sleep
 class Scraper:
     def scrap(self, driver, keyword):
         sleep(1)
-        self.Title = driver.find_element(By.XPATH,'//*[contains(@class,"job-title")]').text
-        print(self.Title)
-        self.Link = driver.find_element(By.XPATH,'//*[contains(@class,"job-title")]/a').get_attribute("href")
+        sleep(1)
+        self.Link = driver.find_element(By.XPATH,'//*[contains(@class,"job-title")]//a').get_attribute("href")
         print(self.Link)
+        self.Title = driver.find_element(By.XPATH,'//*[contains(@class,"job-title")]').text
+        
+        print(self.Title)
+
 
         ## PRIMARY DESCRIPTION
         # Aquí podría ser mejor traer el texto completo y solamente dividir.
