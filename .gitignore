@@ -1,0 +1,9 @@
+## Files that will exist once the scraper is turned on. And venv
+LinkedIn/Data/
+LinkedIn/__pycache__
+LinkedIn/data.csv
+Log/
+Getonboard/Data/
+Getonboard/df_main.csv
+venv
+_output/
