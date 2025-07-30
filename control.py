@@ -69,20 +69,25 @@ import random
 """
 ### THIS SCRIPTS NEEDS AN LINKEDIN ACCOUNT TO LOG IN AND WORK. << MUST COMPLETE >>
 
-clave = "polghtherce1"
-mail = "laserena.arbolada@gmail.com"
-
-#clave = "9999cdrz4@A"
-#mail = "lcarvajalrojas3@gmail.com"
+clave = "eureka12345"
+mail = "delirantedesvario@gmail.com"
 
 ### List of posible searches. << MUST COMPLETE >>
 
+# keywords = [
+#             "Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administración de Empresas", "C#", "DevOps",
+#             "Trabajo Social", "Actuación", "Psicología", "Química", "IaC", "Administración de contratos", "Business Partner",
+#             "Antropología", "Ingeniero Civil Industrial", "Física", "C++", "Construcción", "Ejecutivo Comercial"
+#             "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores", "Python",
+#             "Cientista Social", "Forestal", "Java", "Azure", "Cloud", "Banca", "Ejecutivo Banca", "Ejecutivo de Ventas"
+#             ]
+
 keywords = [
             "Data Scientist", "Data Analyst", "Ingeniero Comercial", "Administración de Empresas", "C#", "DevOps",
-            "Trabajo Social", "Actuación", "Psicología", "Química", "IaC", "Administración de contratos", "Business Partner",
-            "Antropología", "Ingeniero Civil Industrial", "Física", "C++", "Construcción", "Ejecutivo Comercial"
-            "Ciencias Sociales", "Finanzas", "Arquitectura", "Diseño", "Diseño de interiores", "Python",
-            "Cientista Social", "Forestal", "Java", "Azure", "Cloud", "Banca", "Ejecutivo Banca", "Ejecutivo de Ventas"
+            "Química", "IaC", "Software",
+            "Ingeniero Civil Industrial", "Física", "C++", "Construcción",
+            "Python", "Data Scientist",
+            "Forestal", "Java", "Azure", "Cloud"
             ]
 
 keyword = random.choice(keywords)
@@ -127,10 +132,10 @@ try:
 
                 # > Driver Cerrado
                 if driver_open == 0:
-    
                     driver = site.run()
                     driver_open = 1
 
+                    # Inicio de sesión
                     site.login(driver, mail, clave)
                     time.sleep(5)
 
@@ -170,25 +175,25 @@ try:
                         # Carga de datos de aviso
                         jobs[i].click()
                         print("click realizado en i ", i)
-                        time.sleep(5)
+                        time.sleep(2)
                         
                         # Extracción de datos
                         dicc = scraper.scrap(driver, keyword) ### F(x) Extrae info del item, y la devuelve en un dicc
                         #print(dicc)
-                        time.sleep(random.randint(3,20))
+                        time.sleep(random.randint(1,3))
 
                         #Encapsulado y guardado de datos
                         date_temp = datetime.datetime.today().strftime('%d-%m-%Y-%H-%M-%S')
                         dftemp = pd.DataFrame(dicc)
                         dftemp.to_csv(os.path.join(
-                            data_folderpath, f"{keyword}_{date_temp}.csv"))
+                            data_folderpath, f"{keyword}_{date_temp}.csv"), sep="|", index=False)
                         
                         print(f"Scrap exitoso en pag {pag} - i {i} - n {i+1}\n")
-                        time.sleep(random.randint(1,5))
+                        time.sleep(random.randint(1,2))
 
                     except: 
                         print(f"Error en pag {pag} i {i}  n {i+1} ... continuando")
-                        time.sleep(14)
+                        time.sleep(3)
 
                 # Preparación variables siguiente de página
                 keyword_x = keyword.replace(" ", "%20")

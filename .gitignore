@@ -1,9 +1,20 @@
-## Files that will exist once the scraper is turned on. And venv
+# Archivos que se generarán al ejecutar el scraper y otros directorios temporales
+
+# Carpetas y archivos de LinkedIn
 LinkedIn/Data/
-LinkedIn/__pycache__
+LinkedIn/__pycache__/
 LinkedIn/data.csv
+
+# Logs
 Log/
+
+# Archivos de GetOnBoard
 Getonboard/Data/
 Getonboard/df_main.csv
-venv
-_output
+
+# Entorno virtual de Python
+venv/
+
+# Directorios de salida
+_output/
+_output/desa_linked_df.xlsx

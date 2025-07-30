@@ -8,9 +8,8 @@ from time import sleep
 class Scraper:
     def scrap(self, driver, keyword):
         sleep(1)
-        sleep(1)
         self.Link = driver.find_element(By.XPATH,'//*[contains(@class,"job-title")]//a').get_attribute("href")
-        print(self.Link)
+        #print(self.Link)
         self.Title = driver.find_element(By.XPATH,'//*[contains(@class,"job-title")]').text
         
         print(self.Title)
@@ -18,32 +17,44 @@ class Scraper:
 
         ## PRIMARY DESCRIPTION
         # Aquí podría ser mejor traer el texto completo y solamente dividir.
-        primary_description = driver.find_element(By.XPATH,'//*[contains(@class,"primary-description-without-tagline")]').text.split(" · ")
+
+        self.Company = driver.find_element(By.XPATH,'//*[contains(@class,"job-details-jobs-unified-top-card__company-name")]').text
+        print(self.Company)
+
+        #primary_description = driver.find_element(By.XPATH,'//*[contains(@class,"primary-description-without-tagline")]').text.split(" · ")
+        primary_description = driver.find_element(By.XPATH,'//*[contains(@class,"job-details-jobs-unified-top-card__primary-description")]').text.split(" · ")
+        
+
         print("primary_description: ",primary_description)
         # Ejemplo: WSP Chile y Argentina · Las Condes, Región Metropolitana de Santiago, Chile · Publicado de nuevo hace 1 semana · Más de 100 solicitudes
-        self.Company = primary_description[0]
+        
         #print(self.Company)
-        self.Location = primary_description[1]
-        #print(self.Location)
-        self.Time_on = primary_description[2]
-        #print(self.time_on)
-        self.Applies = primary_description[3]
-        #print(self.applies)
+
+        self.Location = primary_description[0]
+        print("Location: ", self.Location)
+        self.Time_on = primary_description[1]
+        print("Time_on: ", self.Time_on)
+        self.Applies = primary_description[2].split('\n', 1)[0]
+        print("Applies: ", self.Applies)
+
+        ## NOTA: MEJORAR SCRAP DE ESTA 
 
         ## job-insight-...-secondary
+        print("Obteniendo job_insight_secondary")
         job_insight_secondary = driver.find_elements(By.XPATH, "//*[contains(@class, 'job-insight') and contains(@class, '-secondary')]/../span")
-        print("job_insight_secondary: "," ".join([element.text for element in job_insight_secondary]))
-        self.Modality = job_insight_secondary[0].text
-        #print("Modality: ", self.Modality)
-        self.Working_day = job_insight_secondary[1].text
-        #print("Working_day: ", self.Working_day)
+        #print("job_insight_secondary: "," ".join([element.text for element in job_insight_secondary]))
+        self.Modality = job_insight_secondary[0].text.split('\n', 1)[0]
+        print("Modality: ", self.Modality)
+        self.Working_day = job_insight_secondary[1].text.split('\n', 1)[0]
+        print("Working_day: ", self.Working_day)
         try:
-            self.Experience = job_insight_secondary[2].text
+            self.Experience = job_insight_secondary[2].text.split('\n', 1)[0]
         except:
             self.Experience = None
-        #print("Experience: ", self.Experience)
+        print("Experience: ", self.Experience)
 
         # Company top card job insight
+        print("Obteniendo company insight")
         try:
             job_insight_company = driver.find_element(By.XPATH, '//li-icon[contains(@type,"company")]/../../../..').text.split(" · ")
             print("job_insight_company: ",job_insight_company)
@@ -54,19 +65,22 @@ class Scraper:
             except: self.Company_area = None
             #print("Company_area: ", self.Company_area)
         except:
+            print("Company insight no obtenido")
             self.Company_size = None
             #print("Company_size: ", self.Company_size)
             self.Company_area = None
             #print("Company_area: ", self.Company_area)
         
         ## SCRIPT APTITUDES
+        print("Obteniendo aptitudes")
+        sleep(5) # DEBUG
         try: 
             #self.Apts = aptitudes(driver)
             button = driver.find_element(By.XPATH,'//button[contains(@id, "ember") and contains(@class, "mv5 t-16")]')
             #print("botón encontrado")
             driver.execute_script("arguments[0].click();", button)
             #print("botón clickeado")
-            sleep(5)
+            sleep(2)
             aptsdiv = driver.find_elements(By.XPATH,'//*[@class="display-flex align-items-center"]')
             self.Apts = []
             for aptdiv in aptsdiv[:-1]:

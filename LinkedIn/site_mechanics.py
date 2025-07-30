@@ -1,7 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 import pandas as pd
 import os
@@ -14,7 +16,7 @@ class Site:
         se crea una nueva instancia de la clase.
         """
 
-        self.url = 'https://www.linkedin.com/'
+        self.url = 'https://www.linkedin.com/login/es?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin'
         #print(self.url)
         self.is_running = False
 
@@ -47,12 +49,20 @@ class Site:
         file_dir = os.path.dirname(__file__)
         print(file_dir)
 
-        self.driver = webdriver.Chrome(executable_path=os.path.join(file_dir, '../chromedriver'))#, options=self.options) # Replace with appropriate web driver
+        #self.driver = webdriver.Chrome(executable_path=os.path.join(file_dir, '../chromedriver'))#, options=self.options) # Replace with appropriate web driver
+        # Create a Service object for ChromeDriver
+        #service = Service(executable_path=os.path.join(file_dir, '../chromedriver'))
+        #self.driver = webdriver.Chrome(service=service, options=self.options)
+
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
+        
         print("open_webdriver: Driver abierto")
         return self.driver
     
     def login(self, driver, mail, clave):
-        self.userdiv = driver.find_element(By.XPATH,'//*[@autocomplete="username"]')
+        sleep(5)
+        #self.userdiv = driver.find_element(By.XPATH,'//*[@autocomplete="username"]')
+        self.userdiv = driver.find_element(By.XPATH,'//*[@id="username"]')
         self.userdiv.click()
         self.userdiv.clear()
         self.userdiv.send_keys(mail)
@@ -63,7 +73,7 @@ class Site:
         self.passdiv.send_keys(clave)
 
         self.driver.find_element(By.XPATH,'//*[@type="submit"]').click()
-        sleep(1)
+        sleep(10)
         print("Cuenta Logueada\n")
         sleep(2)
 
@@ -93,7 +103,11 @@ class Site:
         self.df_page = pd.DataFrame()
             ## Identificación de container
 
-        self.container = driver.find_element(By.XPATH, '//*[contains(@class, "scaffold-layout__list-container")]/..')
+        sleep(5) # Debug
+        #self.container = driver.find_element(By.XPATH, '//*[contains(@class, "scaffold-layout__list-container")]/..')
+        #self.container = driver.find_element(By.XPATH, '//*[contains(@class, "jobs-search-results-list")]/..')
+        self.container = driver.find_element(By.XPATH, '//*[contains(@id, "jobs-search-results-footer")]/..')
+
             # Medido de tamaño de scroll
         print("  Encontrado container\n  Iniciando scroll")
         self.prev_height = driver.execute_script("return arguments[0].scrollHeight;", self.container)
